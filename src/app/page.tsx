@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ReleaseTable } from '@/components/ReleaseTable';
 import { ReleaseDetailModal } from '@/components/ReleaseDetailModal';
 import { CreateReleaseModal } from '@/components/CreateReleaseModal';
+import { TableSkeleton } from '@/components/TableSkeleton';
 import { Button } from '@/components/ui/button';
 import type { Release, CreateReleaseInput } from '@/types';
 
@@ -120,36 +121,32 @@ export default function Home() {
           </div>
         )}
 
-        {isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Loading releases...</p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <div>
-                <h2 className="text-sm text-blue-600 font-medium">All releases</h2>
-                <h3 className="text-xl font-bold text-gray-900 mt-1">Releases</h3>
-              </div>
-              <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
-                <span>+</span> New release
-              </Button>
+        <div className="bg-white rounded-lg shadow">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div>
+              <h2 className="text-sm text-blue-600 font-medium">All releases</h2>
+              <h3 className="text-xl font-bold text-gray-900 mt-1">Releases</h3>
             </div>
-
-            {releases.length === 0 ? (
-              <div className="px-6 py-12 text-center">
-                <p className="text-gray-500 mb-4">No releases yet</p>
-                <Button onClick={() => setIsCreateOpen(true)}>Create your first release</Button>
-              </div>
-            ) : (
-              <ReleaseTable
-                releases={releases}
-                onSelectRelease={handleSelectRelease}
-                onDeleteRelease={handleDeleteRelease}
-              />
-            )}
+            <Button onClick={() => setIsCreateOpen(true)} className="gap-2" disabled={isLoading}>
+              <span>+</span> New release
+            </Button>
           </div>
-        )}
+
+          {isLoading ? (
+            <TableSkeleton />
+          ) : releases.length === 0 ? (
+            <div className="px-6 py-12 text-center">
+              <p className="text-gray-500 mb-4">No releases yet</p>
+              <Button onClick={() => setIsCreateOpen(true)}>Create your first release</Button>
+            </div>
+          ) : (
+            <ReleaseTable
+              releases={releases}
+              onSelectRelease={handleSelectRelease}
+              onDeleteRelease={handleDeleteRelease}
+            />
+          )}
+        </div>
       </main>
 
       <CreateReleaseModal

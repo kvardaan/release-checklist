@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "format": "prisma format",
+    "studio": "prisma studio",
+    "ui:add": "npx shadcn@latest add"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
