@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/helpers';
 import { RELEASE_STEPS } from '@/lib/constants';
 import type { Release } from '@/types';
 

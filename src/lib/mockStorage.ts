@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { computeReleaseStatus } from './utils';
+import { computeReleaseStatus } from './helpers';
 import { RELEASE_STEPS } from './constants';
 import type { IStorage } from './storage';
 import type { Release } from '@/types';

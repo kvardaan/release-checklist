@@ -1,6 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import type { CreateReleaseInput } from '@/types';
 
 interface CreateReleaseModalProps {
@@ -14,12 +24,14 @@ export function CreateReleaseModal({ isOpen, onClose, onCreate }: CreateReleaseM
   const [date, setDate] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
 
     if (!name || !date) {
-      alert('Please fill in all required fields');
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -34,29 +46,36 @@ export function CreateReleaseModal({ isOpen, onClose, onCreate }: CreateReleaseM
       setDate('');
       setAdditionalInfo('');
       onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New Release</h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create New Release</DialogTitle>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-1">
               Release Name *
             </label>
-            <input
+            <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., v2.1.0"
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
               disabled={isLoading}
             />
           </div>
@@ -65,11 +84,10 @@ export function CreateReleaseModal({ isOpen, onClose, onCreate }: CreateReleaseM
             <label className="block text-sm font-medium text-gray-900 mb-1">
               Target Date *
             </label>
-            <input
+            <Input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
               disabled={isLoading}
             />
           </div>
@@ -78,35 +96,33 @@ export function CreateReleaseModal({ isOpen, onClose, onCreate }: CreateReleaseM
             <label className="block text-sm font-medium text-gray-900 mb-1">
               Additional Information (optional)
             </label>
-            <textarea
+            <Textarea
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
               placeholder="Add any notes or details..."
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
               rows={3}
               disabled={isLoading}
             />
           </div>
 
-          <div className="flex gap-2 justify-end pt-4">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-300 disabled:opacity-50"
               disabled={isLoading}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               disabled={isLoading}
             >
               {isLoading ? 'Creating...' : 'Create'}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
