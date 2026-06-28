@@ -44,16 +44,25 @@ npm install
 cp .env.example .env.local
 ```
 
-Then edit `.env.local` with your PostgreSQL database URL:
+Then edit `.env.local`. You have two options:
+
+**Option A: Quick Start with Mock Data (No Database)**
+```bash
+MOCK=true
 ```
+This uses JSON file-based storage (stored in `.data/releases.json`). Perfect for quick testing!
+
+**Option B: PostgreSQL Database**
+```bash
+MOCK=false
 DATABASE_URL="postgresql://user:password@localhost:5432/release_checklist"
 ```
 
-Database setup options:
-- **Local**: `postgresql://user:password@localhost:5432/release_checklist`
-- **Supabase**: Copy the connection string from your Supabase project
+Database connection string examples:
+- **Local PostgreSQL**: `postgresql://user:password@localhost:5432/release_checklist`
+- **Supabase**: Copy the connection string from your Supabase project settings
 
-4. Set up the database
+4. Set up the database (only if using PostgreSQL, skip if using MOCK=true)
 ```bash
 npx prisma migrate dev --name init
 ```
@@ -101,6 +110,29 @@ The main page displays all your releases with their current status (planned, ong
 2. Click "Delete Release"
 3. Confirm the deletion
 
+## Storage Options
+
+### Mock Storage (Development/Testing)
+Perfect for quick local testing without needing a database:
+```bash
+MOCK=true
+```
+- Data is stored in `.data/releases.json`
+- No setup required
+- Great for development and demos
+- Data persists between restarts
+- Add `.data/` to `.gitignore` (already done)
+
+### PostgreSQL Database (Production)
+```bash
+MOCK=false
+DATABASE_URL="your-database-url"
+```
+- Persistent production-grade storage
+- Supports migrations with Prisma
+- Type-safe with ORM
+- Recommended for deployed applications
+
 ## API Endpoints
 
 - `GET /api/releases` - List all releases
@@ -109,6 +141,8 @@ The main page displays all your releases with their current status (planned, ong
 - `PATCH /api/releases/[id]` - Update release additional info
 - `DELETE /api/releases/[id]` - Delete a release
 - `PATCH /api/releases/[id]/steps/[stepIndex]` - Toggle step completion
+
+All endpoints work with both mock storage and PostgreSQL - just set the `MOCK` environment variable!
 
 ## Project Structure
 
@@ -167,7 +201,10 @@ npx prisma studio
 - Single-user application (no authentication required)
 - All 10 release steps are predefined and the same for every release
 - Release status is automatically computed based on step completion
-- Uses PostgreSQL with Prisma ORM for type-safe queries
+- Flexible storage: choose between JSON-based mock storage or PostgreSQL
+- API abstraction layer allows easy switching between storage implementations
+- Mock storage is perfect for rapid development and testing
+- Production deployments should use PostgreSQL for reliability and scalability
 
 ## License
 
