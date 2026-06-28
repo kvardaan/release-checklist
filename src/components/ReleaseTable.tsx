@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import { Eye, Trash2 } from 'lucide-react';
+import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { formatDate } from '@/lib/helpers';
 import type { Release } from '@/types';
 
@@ -14,12 +17,30 @@ export function ReleaseTable({
   onSelectRelease,
   onDeleteRelease,
 }: ReleaseTableProps) {
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteReleaseId, setDeleteReleaseId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Delete this release?')) {
-      await onDeleteRelease(id);
+    setDeleteReleaseId(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteReleaseId) {
+      setIsDeleting(true);
+      try {
+        await onDeleteRelease(deleteReleaseId);
+        setShowDeleteConfirm(false);
+        setDeleteReleaseId(null);
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
+
+  const selectedRelease = releases.find((r) => r.id === deleteReleaseId);
 
   const getStatusBadgeClasses = (status: string) => {
     switch (status) {
@@ -64,17 +85,38 @@ export function ReleaseTable({
                 </span>
               </td>
               <td className="px-6 py-4 text-right">
-                <button
-                  onClick={(e) => handleDelete(release.id, e)}
-                  className="text-red-600 hover:text-red-700 text-sm font-medium"
-                >
-                  Delete
-                </button>
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    onClick={() => onSelectRelease(release.id)}
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                    title="View details"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={(e) => handleDeleteClick(release.id, e)}
+                    className="text-gray-600 hover:text-red-600 transition-colors"
+                    title="Delete release"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Delete Release"
+        description="Are you sure you want to delete"
+        itemName={selectedRelease?.name || ''}
+        isLoading={isDeleting}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }

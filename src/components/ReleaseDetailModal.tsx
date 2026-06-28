@@ -43,14 +43,12 @@ export function ReleaseDetailModal({
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Delete this release?')) {
-      setIsDeleting(true);
-      try {
-        await onDelete(release.id);
-        onOpenChange(false);
-      } finally {
-        setIsDeleting(false);
-      }
+    setIsDeleting(true);
+    try {
+      await onDelete(release.id);
+      onOpenChange(false);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -183,7 +181,7 @@ export function ReleaseDetailModal({
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            Delete Release
+            {isDeleting ? 'Deleting...' : 'Delete Release'}
           </Button>
         </DialogFooter>
       </DialogContent>
