@@ -24,9 +24,11 @@ export async function getStorage(): Promise<IStorage> {
   }
 
   if (process.env.MOCK === 'true') {
+    console.log("Using MOCK Data Store")
     const { MockStorage } = await import('./mockStorage');
     storageInstance = new MockStorage();
   } else {
+    console.log("Using REAL DB")
     const { PrismaStorage } = await import('./prismaStorage');
     storageInstance = new PrismaStorage();
   }
