@@ -105,7 +105,9 @@ export class MockStorage implements IStorage {
 
     if (releaseIndex === -1) return null;
 
-    releases[releaseIndex].additionalInfo = data.additionalInfo ?? releases[releaseIndex].additionalInfo;
+    if (data.additionalInfo !== undefined) {
+      releases[releaseIndex].additionalInfo = data.additionalInfo;
+    }
     releases[releaseIndex].updatedAt = new Date().toISOString();
 
     await this.writeReleases(releases);
@@ -128,16 +130,20 @@ export class MockStorage implements IStorage {
     completed: boolean
   ): Promise<Release | null> {
     const releases = await this.readReleases();
-    const release = releases.find((r) => r.id === id);
+    const releaseIndex = releases.findIndex((r) => r.id === id);
 
-    if (!release) return null;
+    if (releaseIndex === -1) return null;
 
-    const step = release.steps.find((s) => s.stepIndex === stepIndex);
-    if (step) {
-      step.completed = completed;
+    const release = releases[releaseIndex];
+    const stepToUpdate = release.steps.find((s) => s.stepIndex === stepIndex);
+
+    if (stepToUpdate) {
+      stepToUpdate.completed = completed;
     }
 
     release.updatedAt = new Date().toISOString();
+    releases[releaseIndex] = release;
+
     await this.writeReleases(releases);
 
     return this.formatRelease(release);

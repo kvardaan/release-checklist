@@ -3,13 +3,14 @@ import type { UpdateReleaseInput } from '@/types';
 import { NextResponse } from 'next/server';
 
 interface Params {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export async function GET(request: Request, { params }: Params) {
+export async function GET(request: Request, props: Params) {
   try {
+    const params = await props.params;
     const storage = await getStorage();
     const release = await storage.getReleaseById(params.id);
 
@@ -24,8 +25,9 @@ export async function GET(request: Request, { params }: Params) {
   }
 }
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
   try {
+    const params = await props.params;
     const body = (await request.json()) as UpdateReleaseInput;
     const storage = await getStorage();
     const release = await storage.updateRelease(params.id, body);
@@ -41,8 +43,9 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
   try {
+    const params = await props.params;
     const storage = await getStorage();
     const success = await storage.deleteRelease(params.id);
 

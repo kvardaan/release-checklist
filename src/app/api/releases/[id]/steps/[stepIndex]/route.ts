@@ -3,14 +3,15 @@ import { RELEASE_STEPS } from '@/lib/constants';
 import { NextResponse } from 'next/server';
 
 interface Params {
-  params: {
+  params: Promise<{
     id: string;
     stepIndex: string;
-  };
+  }>;
 }
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
   try {
+    const params = await props.params;
     const body = (await request.json()) as { completed: boolean };
     const stepIndex = parseInt(params.stepIndex, 10);
 
