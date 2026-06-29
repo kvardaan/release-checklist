@@ -12,7 +12,7 @@ A modern web application to help developers manage their release process with a 
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript
+- **Frontend**: Next.js 16, React, TypeScript
 - **Backend**: Next.js API Routes
 - **Database**: PostgreSQL
 - **ORM**: Prisma
@@ -23,44 +23,44 @@ A modern web application to help developers manage their release process with a 
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- pnpm
 - PostgreSQL database
 
 ### Installation
 
 1. Clone the repository
 ```bash
-git clone <repo-url>
+git clone https://github.com/kvardaan/release-checklist.git
 cd release-checklist
 ```
 
 2. Install dependencies
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Then edit `.env.local`. You have two options:
+Then edit `.env`. You have two options:
 
 **Option A: Quick Start with Mock Data (No Database)**
 ```bash
-MOCK=true
+MOCK="true"
 ```
 This uses JSON file-based storage (stored in `.data/releases.json`). Perfect for quick testing!
 
 **Option B: PostgreSQL Database**
 ```bash
-MOCK=false
+MOCK="false"
 DATABASE_URL="postgresql://user:password@localhost:5432/release_checklist"
 ```
 
 Database connection string examples:
 - **Local PostgreSQL**: `postgresql://user:password@localhost:5432/release_checklist`
-- **Supabase**: Copy the connection string from your Supabase project settings
+- **Supabase/Other Provider**: Copy the connection string from your Supabase project settings
 
 4. Set up the database (only if using PostgreSQL, skip if using MOCK=true)
 ```bash
@@ -69,7 +69,7 @@ npx prisma migrate dev --name init
 
 5. Run the development server
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -115,7 +115,7 @@ The main page displays all your releases with their current status (planned, ong
 ### Mock Storage (Development/Testing)
 Perfect for quick local testing without needing a database:
 ```bash
-MOCK=true
+MOCK="true"
 ```
 - Data is stored in `.data/releases.json`
 - No setup required
@@ -125,7 +125,7 @@ MOCK=true
 
 ### PostgreSQL Database (Production)
 ```bash
-MOCK=false
+MOCK="false"
 DATABASE_URL="your-database-url"
 ```
 - Persistent production-grade storage
@@ -177,24 +177,14 @@ release-checklist/
 
 ### Build for production
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Prisma Studio (Database GUI)
 ```bash
 npx prisma studio
 ```
-
-## Deployment
-
-### Deploy to Vercel (Recommended)
-1. Push your code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Click "Add New..." → "Project"
-4. Select your repository
-5. Add `DATABASE_URL` environment variable
-6. Click "Deploy"
 
 ## Notes
 
@@ -205,7 +195,3 @@ npx prisma studio
 - API abstraction layer allows easy switching between storage implementations
 - Mock storage is perfect for rapid development and testing
 - Production deployments should use PostgreSQL for reliability and scalability
-
-## License
-
-MIT
